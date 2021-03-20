@@ -3,18 +3,21 @@ import scrapy
 from showcase.items import Car
 
 
-class QuotesSpider(scrapy.Spider):
-    name = "quotes"
+class CarMarketSpider(scrapy.Spider):
+    name = "cars"
+    # Base url used for formatting next page url
+    base_url = 'https://someurl.eu'
 
     def start_requests(self):
-        urls = [
-            'https://skoda-superb.autobazar.eu/',
-        ]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+        # Start the first request
+        url = 'https://someurl.eu/'
+        yield scrapy.Request(url, self.parse)
 
     def parse(self, response):
+        # Find all ads
         res = response.xpath('//div[contains(@class, "listitem") and contains(@id, "list-item")]')
+
+        # Iterate over found ads and scrape details
         for ad in res:
             price_container = ad.xpath('div[@class="listitem-content-right"]/div/div[@class="listitem-price"]')
             price = price_container.xpath('*/strong/text()').get().strip()
@@ -34,8 +37,8 @@ class QuotesSpider(scrapy.Spider):
                       km=km, kw=kw, date=date, image_urls=[img_url])
             yield car
 
-        # page = response.url.split("/")[-2]
-        # filename = f'quotes-{page}.html'
-        # with open(filename, 'wb') as f:
-        #     f.write(response.body)
-        # self.log(f'Saved file {filename}')
+        # Find the next page
+        next_page = response.xpath('//a[@class="fwd1"]/@href').get()
+        # If next page is not null, scrape it
+        if next_page is not None:
+            yield response.follow(self.base_url + next_page, callback=self.parse)

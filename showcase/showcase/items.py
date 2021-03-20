@@ -6,6 +6,7 @@
 import scrapy
 
 
+# Create scrape item
 class Car(scrapy.Item):
     price = scrapy.Field()
     name = scrapy.Field()

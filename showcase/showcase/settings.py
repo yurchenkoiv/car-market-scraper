@@ -11,8 +11,10 @@ BOT_NAME = 'showcase'
 
 SPIDER_MODULES = ['showcase.spiders']
 NEWSPIDER_MODULE = 'showcase.spiders'
+
+# Use pipeline to save images
 ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
-IMAGES_STORE = '/Users/igoriurchenko/Documents/scrapyProject/showcase/showcase/images'
+IMAGES_STORE = '/showcase/showcase/images'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
